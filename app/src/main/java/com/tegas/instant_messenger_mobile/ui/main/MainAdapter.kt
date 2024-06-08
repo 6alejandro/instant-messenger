@@ -1,0 +1,54 @@
+package com.tegas.instant_messenger_mobile.ui.main
+
+import android.content.ClipData.Item
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.tegas.instant_messenger_mobile.R
+import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
+import com.tegas.instant_messenger_mobile.databinding.ItemContactBinding
+
+class MainAdapter(private val originalChatList: MutableList<ChatsItem> = mutableListOf(),
+    private val listener:(ChatsItem) -> Unit) :
+    RecyclerView.Adapter<MainAdapter.ChatViewHolder>() {
+
+    private var chatList: List<ChatsItem> = listOf()
+
+    fun setData(chatList: List<ChatsItem?>) {
+        this.chatList = chatList.filterNotNull()
+        notifyDataSetChanged()
+    }
+
+    inner class ChatViewHolder(private val binding: ItemContactBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(chat: ChatsItem) {
+
+            binding.tvName.text = chat.name
+            binding.tvMessage.text = chat.lastMessage
+            binding.tvTime.text = chat.lastMessageTime
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+        return ChatViewHolder(
+            ItemContactBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        val chat = originalChatList[position]
+        holder.bind(chat)
+    }
+
+    override fun getItemCount(): Int {
+        return originalChatList.size
+    }
+
+
+}
