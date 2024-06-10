@@ -17,4 +17,9 @@ interface ApiService {
     fun getChatDetail(
         @Query("chatId") chatId: String
     ): Call<ChatDetailResponse>
+
+    @GET("chatDetail")
+    suspend fun getChatDetails(
+        @Query("chatId") chatId: String
+    ): ChatDetailResponse
 }

@@ -1,14 +1,12 @@
 package com.tegas.instant_messenger_mobile.ui.main
 
-import android.content.ClipData.Item
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.tegas.instant_messenger_mobile.R
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.databinding.ItemContactBinding
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MainAdapter(private val originalChatList: MutableList<ChatsItem> = mutableListOf(),
     private val listener:(ChatsItem) -> Unit) :
@@ -27,7 +25,14 @@ class MainAdapter(private val originalChatList: MutableList<ChatsItem> = mutable
 
             binding.tvName.text = chat.name
             binding.tvMessage.text = chat.lastMessage
-            binding.tvTime.text = chat.lastMessageTime
+            binding.tvTime.text = formatDateTime(chat.lastMessageTime)
+        }
+
+        private fun formatDateTime(timestamp: String): String {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            val date = inputFormat.parse(timestamp)
+            return outputFormat.format(date)
         }
     }
 

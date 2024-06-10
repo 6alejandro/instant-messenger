@@ -33,5 +33,5 @@ data class MessagesItem(
 	val sentAt: String,
 
 	@field:SerializedName("content")
-	val content: String? = null
+	val content: String
 ): Parcelable
