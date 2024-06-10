@@ -1,26 +1,21 @@
 package com.tegas.instant_messenger_mobile.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.data.retrofit.ApiService
-import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatListResponse
+import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import kotlinx.coroutines.Dispatchers
 
 class ChatRepository(
     private val apiService: ApiService
 ) {
-    fun getChatList(nim: JsonObject): LiveData<Result<ChatListResponse>> =
+    fun getChatList(nim: String): LiveData<Result<List<ChatsItem>>> =
         liveData(Dispatchers.IO) {
             emit(Result.Loading)
             try {
                 val response = apiService.getChatList(nim)
-                val chat = response.chats
-                val error = response.error
-                Log.d("Response", "Response: $chat")
-                Log.d("Error", "Error: $error")
-                emit(Result.Success(response))
+                val teachers = response.chats
+                emit(Result.Success(teachers))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }

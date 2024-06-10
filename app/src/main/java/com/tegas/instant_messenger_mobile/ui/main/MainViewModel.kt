@@ -4,17 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.data.ChatRepository
 import com.tegas.instant_messenger_mobile.data.Result
-import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatListResponse
+import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 
 class MainViewModel(private val repository: ChatRepository) : ViewModel() {
 
-    private val _mainViewModel = MediatorLiveData<Result<ChatListResponse>>()
-    val mainViewModel: LiveData<Result<ChatListResponse>> = _mainViewModel
+    private val _mainViewModel = MediatorLiveData<Result<List<ChatsItem>>>()
+    val mainViewModel: LiveData<Result<List<ChatsItem>>> = _mainViewModel
 
-    fun getChatList(nim: JsonObject) {
+    fun getChatList(nim: String) {
         val liveData = repository.getChatList(nim)
         _mainViewModel.addSource(liveData) { result ->
             _mainViewModel.value = result
