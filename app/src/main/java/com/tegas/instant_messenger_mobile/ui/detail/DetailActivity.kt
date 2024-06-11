@@ -1,5 +1,6 @@
 package com.tegas.instant_messenger_mobile.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,32 +8,43 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.tegas.instant_messenger_mobile.R
 import com.tegas.instant_messenger_mobile.data.Result
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
-import com.tegas.instant_messenger_mobile.databinding.ActivityDetailBinding
+import com.tegas.instant_messenger_mobile.databinding.ActivityDetailSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
+import com.tegas.instant_messenger_mobile.ui.main.MainActivity
 
 class DetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityDetailBinding
+    private lateinit var binding: ActivityDetailSecondBinding
     private val viewModel by viewModels<DetailViewModel> {
         ViewModelFactory.getInstance(this)
     }
 
     private lateinit var chat: MessagesItem
-//    private var chatId: String? = null
+
+    //    private var chatId: String? = null
     private lateinit var adapter: MessageAdapter
     private val nim = "21106050048"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetailBinding.inflate(layoutInflater)
+        binding = ActivityDetailSecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val item = intent.getParcelableExtra<ChatsItem>("item")
         val chatId = item?.chatId
         Log.d("CHAT ID", "CHAT ID: $chatId")
         binding.tvName.text = item?.name
+        Glide
+            .with(this)
+            .load(
+                R.drawable
+                    .daniela_villarreal
+            )
+            .into(binding.ivImage)
 
         setRecyclerView(nim)
         viewModel.getChatDetails(chatId!!)
@@ -61,6 +73,11 @@ class DetailActivity : AppCompatActivity() {
                     adapter.setData(it.data as MutableList<MessagesItem>)
                 }
             }
+        }
+
+        binding.backButton.setOnClickListener {
+            intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 

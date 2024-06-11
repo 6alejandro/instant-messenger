@@ -9,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tegas.instant_messenger_mobile.data.Result
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
-import com.tegas.instant_messenger_mobile.databinding.ActivityMainBinding
+import com.tegas.instant_messenger_mobile.databinding.ActivityMainSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
 import com.tegas.instant_messenger_mobile.ui.detail.DetailActivity
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainSecondBinding
 
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val nim = "21106050048"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainSecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setRecyclerView()

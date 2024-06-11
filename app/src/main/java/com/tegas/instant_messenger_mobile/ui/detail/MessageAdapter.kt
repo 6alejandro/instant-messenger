@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
-import com.tegas.instant_messenger_mobile.databinding.ItemChatBinding
+import com.tegas.instant_messenger_mobile.databinding.ItemChatsBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -20,17 +20,17 @@ class MessageAdapter(
         notifyDataSetChanged()
     }
 
-    inner class MessageViewHolder(private val binding: ItemChatBinding) :
+    inner class MessageViewHolder(private val binding: ItemChatsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MessagesItem) {
             if (item.senderId != nim) {
-                binding.layoutSent.itemSent.visibility = View.GONE
+                binding.layoutSent.itemSents.visibility = View.GONE
                 binding.layoutReceived.chatReceived.text = item.content
-                binding.layoutReceived.timeReceived.text = formatDateTime(item.sentAt)
+                binding.layoutReceived.tvTime.text = formatDateTime(item.sentAt)
             } else {
-                binding.layoutReceived.itemReceive.visibility = View.GONE
+                binding.layoutReceived.itemReceived.visibility = View.GONE
                 binding.layoutSent.chatSent.text = item.content
-                binding.layoutSent.timeSent.text = formatDateTime(item.sentAt)
+                binding.layoutSent.tvTime.text = formatDateTime(item.sentAt)
             }
         }
 
@@ -44,7 +44,7 @@ class MessageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return MessageViewHolder(
-            (ItemChatBinding.inflate(
+            (ItemChatsBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

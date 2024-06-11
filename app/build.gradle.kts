@@ -74,5 +74,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-rxjava3:2.5.2")
 
+    implementation(libs.androidx.viewpager2)
+
 
 }

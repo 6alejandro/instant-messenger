@@ -3,13 +3,17 @@ package com.tegas.instant_messenger_mobile.ui.main
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.tegas.instant_messenger_mobile.R
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.databinding.ItemContactBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MainAdapter(private val originalChatList: MutableList<ChatsItem> = mutableListOf(),
-    private val listener:(ChatsItem) -> Unit) :
+class MainAdapter(
+    private val originalChatList: MutableList<ChatsItem> = mutableListOf(),
+    private val listener: (ChatsItem) -> Unit
+) :
     RecyclerView.Adapter<MainAdapter.ChatViewHolder>() {
 
     private var chatList: List<ChatsItem> = listOf()
@@ -26,6 +30,10 @@ class MainAdapter(private val originalChatList: MutableList<ChatsItem> = mutable
             binding.tvName.text = chat.name
             binding.tvMessage.text = chat.lastMessage
             binding.tvTime.text = formatDateTime(chat.lastMessageTime)
+
+            Glide.with(itemView)
+                .load(R.drawable.daniela_villarreal)
+                .into(binding.ivPhoto)
         }
 
         private fun formatDateTime(timestamp: String): String {
