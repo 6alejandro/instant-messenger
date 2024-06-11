@@ -12,6 +12,7 @@ import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.databinding.ActivityMainSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
 import com.tegas.instant_messenger_mobile.ui.detail.DetailActivity
+import com.tegas.instant_messenger_mobile.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainSecondBinding
@@ -29,7 +30,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-//    private val nim = "21106050048"
+
+    //    private val nim = "21106050048"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainSecondBinding.inflate(layoutInflater)
@@ -37,13 +39,30 @@ class MainActivity : AppCompatActivity() {
 
         val nim = intent.getStringExtra("nim")
 
+        getSession()
         setRecyclerView()
-        viewModel.getChatList(nim!!)
+//        viewModel.getChatList(nim!!)
         fetchData()
+
+        setLogout()
+    }
+
+    private fun getSession() {
+        viewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+
+            val nim = user.nim
+            val name = user.name
+
+            binding.tvName.text = name
+            viewModel.getChatList(nim)
+        }
     }
 
     private fun setRecyclerView() {
-        binding.rvUser.layoutManager =LinearLayoutManager(this)
+        binding.rvUser.layoutManager = LinearLayoutManager(this)
         binding.rvUser.setHasFixedSize(true)
         binding.rvUser.adapter = adapter
     }
@@ -67,6 +86,12 @@ class MainActivity : AppCompatActivity() {
                     adapter.setData(it.data as MutableList<ChatsItem>)
                 }
             }
+        }
+    }
+
+    private fun setLogout() {
+        binding.tvLogout.setOnClickListener {
+            viewModel.logout()
         }
     }
 }

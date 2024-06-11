@@ -8,6 +8,7 @@ import com.tegas.instant_messenger_mobile.ui.Injection.provideRepository
 import com.tegas.instant_messenger_mobile.ui.detail.DetailViewModel
 import com.tegas.instant_messenger_mobile.ui.login.LoginViewModel
 import com.tegas.instant_messenger_mobile.ui.main.MainViewModel
+import com.tegas.instant_messenger_mobile.ui.splash.SplashViewModel
 
 class ViewModelFactory(private val repository: ChatRepository): ViewModelProvider.NewInstanceFactory() {
 
@@ -22,6 +23,9 @@ class ViewModelFactory(private val repository: ChatRepository): ViewModelProvide
             }
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
                 LoginViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
+                SplashViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

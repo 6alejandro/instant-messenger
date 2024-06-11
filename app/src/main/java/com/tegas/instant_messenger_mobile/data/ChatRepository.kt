@@ -4,14 +4,17 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.gson.JsonObject
+import com.tegas.instant_messenger_mobile.data.pref.UserPreference
 import com.tegas.instant_messenger_mobile.data.retrofit.ApiService
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.data.retrofit.response.LoginResponse
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 
 class ChatRepository(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val userPreference: UserPreference
 ) {
     fun getChatList(nim: String): LiveData<Result<List<ChatsItem>>> =
         liveData(Dispatchers.IO) {
@@ -62,24 +65,36 @@ class ChatRepository(
                 val response = apiService.logins(auth)
                 val data = response.data
                 val error = response.error
+                val name = response.data?.name
+                val nim = response.data?.nim
+                saveSession(UserModel(name!!, nim!!))
                 emit(Result.Success(response))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
         }
 
-//    fun getSession(): Flow<UserModel> {
-//        return user
-//    }
+    private suspend fun saveSession(user: UserModel) {
+        userPreference.saveSession(user)
+    }
+
+    fun getSession(): Flow<UserModel> {
+        return userPreference.getSession()
+    }
+
+    suspend fun logout() {
+        userPreference.logout()
+    }
 
     companion object {
         @Volatile
         private var instance: ChatRepository? = null
         fun getInstance(
-            apiService: ApiService
+            apiService: ApiService,
+            userPreference: UserPreference
         ): ChatRepository =
             instance ?: synchronized(this) {
-                instance ?: ChatRepository(apiService)
+                instance ?: ChatRepository(apiService, userPreference)
             }.also { instance = it }
     }
 }

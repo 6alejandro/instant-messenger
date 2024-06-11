@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.tegas.instant_messenger_mobile.data.ChatRepository
 import com.tegas.instant_messenger_mobile.data.Result
+import com.tegas.instant_messenger_mobile.data.UserModel
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
+import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: ChatRepository) : ViewModel() {
 
@@ -18,6 +22,16 @@ class MainViewModel(private val repository: ChatRepository) : ViewModel() {
         _mainViewModel.addSource(liveData) { result ->
             _mainViewModel.value = result
         }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            repository.logout()
+        }
+    }
+
+    fun getSession(): LiveData<UserModel> {
+        return repository.getSession().asLiveData()
     }
 
     class Factory(private val repository: ChatRepository) :
