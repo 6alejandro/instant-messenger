@@ -24,18 +24,21 @@ class MainActivity : AppCompatActivity() {
         ChatAdapter {
             Intent(this, DetailActivity::class.java).apply {
                 putExtra("item", it)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(this)
             }
         }
     }
-    private val nim = "21106050048"
+//    private val nim = "21106050048"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainSecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val nim = intent.getStringExtra("nim")
+
         setRecyclerView()
-        viewModel.getChatList(nim)
+        viewModel.getChatList(nim!!)
         fetchData()
     }
 

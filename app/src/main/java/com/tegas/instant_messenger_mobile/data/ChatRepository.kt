@@ -3,8 +3,10 @@ package com.tegas.instant_messenger_mobile.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.data.retrofit.ApiService
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
+import com.tegas.instant_messenger_mobile.data.retrofit.response.LoginResponse
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
 import kotlinx.coroutines.Dispatchers
 
@@ -35,6 +37,41 @@ class ChatRepository(
                 emit(Result.Error(e.message.toString()))
             }
         }
+
+    fun login(
+        nim: String,
+        password: String
+    ): LiveData<Result<LoginResponse>> =
+        liveData(Dispatchers.IO) {
+            emit(Result.Loading)
+            try {
+                val response = apiService.login(nim, password)
+                val nim = response.data?.nim
+                val name = response.data?.name
+                Log.d("LOGIN SUCCESS", "Name: $name, NIM: $nim")
+                emit(Result.Success(response))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+
+    fun logins(auth: JsonObject): LiveData<Result<LoginResponse>> =
+        liveData(Dispatchers.IO) {
+            emit(Result.Loading)
+            try {
+                val response = apiService.logins(auth)
+                val data = response.data
+                val error = response.error
+                emit(Result.Success(response))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+
+//    fun getSession(): Flow<UserModel> {
+//        return user
+//    }
+
     companion object {
         @Volatile
         private var instance: ChatRepository? = null

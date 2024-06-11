@@ -1,6 +1,5 @@
 package com.tegas.instant_messenger_mobile.ui.detail
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +14,6 @@ import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
 import com.tegas.instant_messenger_mobile.databinding.ActivityDetailSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
-import com.tegas.instant_messenger_mobile.ui.main.MainActivity
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailSecondBinding
@@ -76,8 +74,9 @@ class DetailActivity : AppCompatActivity() {
         }
 
         binding.backButton.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+//            intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
+            onBackPressed()
         }
     }
 
