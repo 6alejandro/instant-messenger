@@ -38,12 +38,12 @@ class LoginActivity : AppCompatActivity() {
 //        login()
 //        setupLogin()
 
-        setupLogins()
+        login()
         viewModel.loginViewModel
         setupLogin()
     }
 
-    private fun setupLogins() {
+    private fun setupLogin() {
 
         binding.btnLogin.setOnClickListener {
             val nim = binding.etNim.text.toString()
@@ -63,16 +63,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login() {
-        binding.btnLogin.setOnClickListener {
-            binding.apply {
-                val nim = etNim.text.toString().trim()
-                val password = etPassword.text.toString().trim()
-                viewModel.login(nim, password)
-            }
-        }
-    }
-
-    private fun setupLogin() {
         viewModel.loginViewModel.observe(this) {
             when (it) {
                 is Result.Loading -> {

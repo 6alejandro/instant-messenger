@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
 import com.tegas.instant_messenger_mobile.databinding.ItemChatsBinding
 import java.text.SimpleDateFormat
@@ -27,10 +28,31 @@ class MessageAdapter(
                 binding.layoutSent.itemSents.visibility = View.GONE
                 binding.layoutReceived.chatReceived.text = item.content
                 binding.layoutReceived.tvTime.text = formatDateTime(item.sentAt)
+
+                if (item.attachments != null && item.attachments != "null") {
+                    binding.layoutReceived.ivAttachment.visibility = View.VISIBLE
+                    Glide
+                        .with(binding.layoutReceived.ivAttachment.context)
+                        .load(item.attachments)
+                        .into(binding.layoutReceived.ivAttachment)
+                } else {
+                    binding.layoutReceived.ivAttachment.visibility = View.GONE
+                }
+
             } else {
                 binding.layoutReceived.itemReceived.visibility = View.GONE
                 binding.layoutSent.chatSent.text = item.content
                 binding.layoutSent.tvTime.text = formatDateTime(item.sentAt)
+
+                if (item.attachments != null && item.attachments != "null") {
+                    binding.layoutSent.ivAttachment.visibility = View.VISIBLE
+                    Glide
+                        .with(binding.layoutSent.ivAttachment.context)
+                        .load(item.attachments)
+                        .into(binding.layoutSent.ivAttachment)
+                } else {
+                    binding.layoutSent.ivAttachment.visibility = View.GONE
+                }
             }
         }
 

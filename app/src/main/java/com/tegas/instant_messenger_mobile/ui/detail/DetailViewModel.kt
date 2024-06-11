@@ -5,9 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.data.ChatRepository
 import com.tegas.instant_messenger_mobile.data.Result
+import com.tegas.instant_messenger_mobile.data.UserModel
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
+import com.tegas.instant_messenger_mobile.data.retrofit.response.SendResponse
 
 class DetailViewModel(private val repository: ChatRepository) : ViewModel() {
 
@@ -52,6 +56,9 @@ class DetailViewModel(private val repository: ChatRepository) : ViewModel() {
     private val _detailViewModel = MediatorLiveData<Result<List<MessagesItem>>>()
     val detailViewModel: LiveData<Result<List<MessagesItem>>> = _detailViewModel
 
+    private val _sendMessage = MediatorLiveData<Result<SendResponse>>()
+    val sendMessage: LiveData<Result<SendResponse>> = _sendMessage
+
     fun getChatDetails(chatId: String) {
         Log.d("DETAIL VIEW MODEL","DetailViewModel Chat ID: $chatId")
         val liveData = repository.getChatDetails(chatId)
@@ -60,10 +67,19 @@ class DetailViewModel(private val repository: ChatRepository) : ViewModel() {
         }
     }
 
+    fun getSession(): LiveData<UserModel> {
+        return repository.getSession().asLiveData()
+    }
+    fun sendMessage(message: JsonObject) {
+        val liveData = repository.sendMessage(message)
+        _sendMessage.addSource(liveData) { result ->
+            _sendMessage.value = result
+        }
+    }
+
     class Factory(private val repository: ChatRepository) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
             DetailViewModel(repository) as T
-
     }
 }

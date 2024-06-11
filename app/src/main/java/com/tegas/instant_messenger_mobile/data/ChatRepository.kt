@@ -9,6 +9,7 @@ import com.tegas.instant_messenger_mobile.data.retrofit.ApiService
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.data.retrofit.response.LoginResponse
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
+import com.tegas.instant_messenger_mobile.data.retrofit.response.SendResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
@@ -70,6 +71,18 @@ class ChatRepository(
                 saveSession(UserModel(name!!, nim!!))
                 emit(Result.Success(response))
             } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+
+    fun sendMessage(message: JsonObject): LiveData<Result<SendResponse>> =
+        liveData(Dispatchers.IO) {
+            emit(Result.Loading)
+            try {
+                val response = apiService.sendMessage(message)
+                Log.d("Success", response.messages.toString())
+                emit(Result.Success(response))
+            }catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
         }

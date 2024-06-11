@@ -1,5 +1,6 @@
 package com.tegas.instant_messenger_mobile.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,12 +9,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.R
 import com.tegas.instant_messenger_mobile.data.Result
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.data.retrofit.response.MessagesItem
 import com.tegas.instant_messenger_mobile.databinding.ActivityDetailSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
+import com.tegas.instant_messenger_mobile.ui.login.LoginActivity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailSecondBinding
@@ -47,17 +54,63 @@ class DetailActivity : AppCompatActivity() {
         setRecyclerView(nim)
         viewModel.getChatDetails(chatId!!)
         fetchData()
+        getSession(chatId)
+        setupSend()
 
     }
+
+    private fun getSession(chatId: String) {
+        viewModel.getSession().observe(this) { user ->
+            if (!user.isLogin) {
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+
+            val senderId = user.nim
+            val content = binding.editText.text
+
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            dateFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
+            val currentTimeString = dateFormat.format(Date())
+
+            val jSon = JsonObject().apply {
+                addProperty("chatId", chatId)
+                addProperty("senderId", senderId)
+                addProperty("content", content.toString())
+                addProperty("sentAt", currentTimeString)
+                addProperty("attachment", "null")
+            }
+
+            binding.iconSend.setOnClickListener {
+                viewModel.sendMessage(jSon)
+            }
+
+        }
+    }
+
+    private fun setupSend(){
+        viewModel.sendMessage.observe(this) {
+            when(it) {
+                is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this, it.error, Toast.LENGTH_SHORT).show()
+                }
+                is Result.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.editText.text?.clear()
+                    Toast.makeText(this, "$it.data.messages, status: ${it.data.status}", Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
 
     private fun fetchData() {
         viewModel.detailViewModel.observe(this) {
             when (it) {
-                is Result.Loading -> {
-                    Log.d("Result", "Loading")
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-
                 is Result.Error -> {
                     Log.d("Result", "Error")
                     binding.progressBar.visibility = View.GONE
@@ -69,6 +122,11 @@ class DetailActivity : AppCompatActivity() {
                     Log.d("Result", "Success")
                     binding.progressBar.visibility = View.GONE
                     adapter.setData(it.data as MutableList<MessagesItem>)
+                }
+
+                else -> {
+                    Log.d("Result", "Loading")
+                    binding.progressBar.visibility = View.VISIBLE
                 }
             }
         }

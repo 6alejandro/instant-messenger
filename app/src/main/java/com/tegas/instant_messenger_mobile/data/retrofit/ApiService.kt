@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatDetailResponse
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatListResponse
 import com.tegas.instant_messenger_mobile.data.retrofit.response.LoginResponse
+import com.tegas.instant_messenger_mobile.data.retrofit.response.SendResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -41,4 +42,8 @@ interface ApiService {
         @Body auth: JsonObject
     ): LoginResponse
 
+    @POST("messages")
+    suspend fun sendMessage(
+        @Body message: JsonObject
+    ): SendResponse
 }
