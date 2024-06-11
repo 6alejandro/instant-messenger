@@ -1,9 +1,11 @@
 package com.tegas.instant_messenger_mobile.ui.detail
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +34,7 @@ class DetailActivity : AppCompatActivity() {
 
     //    private var chatId: String? = null
     private lateinit var adapter: MessageAdapter
-    private val nim = "21106050048"
+//    private val nim = "21106050048"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +53,16 @@ class DetailActivity : AppCompatActivity() {
             )
             .into(binding.ivImage)
 
-        setRecyclerView(nim)
         viewModel.getChatDetails(chatId!!)
         fetchData()
         getSession(chatId)
         setupSend()
 
+        binding.backButton.setOnClickListener {
+//            intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
+            onBackPressed()
+        }
     }
 
     private fun getSession(chatId: String) {
@@ -65,39 +71,73 @@ class DetailActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java))
             }
 
-            val senderId = user.nim
-            val content = binding.editText.text
-
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            dateFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
-            val currentTimeString = dateFormat.format(Date())
-
-            val jSon = JsonObject().apply {
-                addProperty("chatId", chatId)
-                addProperty("senderId", senderId)
-                addProperty("content", content.toString())
-                addProperty("sentAt", currentTimeString)
-                addProperty("attachment", "null")
+            binding.rvChat.layoutManager = LinearLayoutManager(this).apply {
+                stackFromEnd = true
             }
+            binding.rvChat.setHasFixedSize(true)
+            adapter = MessageAdapter(user.nim)
+            binding.rvChat.adapter = adapter
+
 
             binding.iconSend.setOnClickListener {
+                val senderId = user.nim
+                val content = binding.editText.text.toString()
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(binding.editText.windowToken, 0)
+
+                Log.d("CONTENT", "CONTENT: $content")
+
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+                dateFormat.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
+                val currentTimeString = dateFormat.format(Date())
+
+                val jSon = JsonObject().apply {
+                    addProperty("chatId", chatId)
+                    addProperty("senderId", senderId)
+                    addProperty("content", content)
+                    addProperty("sentAt", currentTimeString)
+                    addProperty("attachment", "null")
+                }
                 viewModel.sendMessage(jSon)
+
+                viewModel.sendMessage.observe(this) { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            // Fetch chat details after a successful send operation
+                            viewModel.getChatDetails(chatId)
+                            Log.d("GETCHAT", "getChatDetail run after send button")
+                        }
+                        // Handle other cases if needed
+                        is Result.Error -> {
+                            Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show()
+                        }
+                        Result.Loading -> {
+                            Toast.makeText(this, "WAIT", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
 
         }
     }
 
-    private fun setupSend(){
+    private fun setupSend() {
         viewModel.sendMessage.observe(this) {
-            when(it) {
+            when (it) {
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(this, it.error, Toast.LENGTH_SHORT).show()
                 }
+
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.editText.text?.clear()
-                    Toast.makeText(this, "$it.data.messages, status: ${it.data.status}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "$it.data.messages, status: ${it.data.status}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 else -> {
@@ -131,17 +171,7 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
-        binding.backButton.setOnClickListener {
-//            intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-            onBackPressed()
-        }
+
     }
 
-    private fun setRecyclerView(nim: String) {
-        binding.rvChat.layoutManager = LinearLayoutManager(this)
-        binding.rvChat.setHasFixedSize(true)
-        adapter = MessageAdapter(nim)
-        binding.rvChat.adapter = adapter
-    }
 }

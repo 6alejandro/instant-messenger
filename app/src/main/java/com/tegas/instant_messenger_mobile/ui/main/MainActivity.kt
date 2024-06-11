@@ -1,12 +1,20 @@
 package com.tegas.instant_messenger_mobile.ui.main
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.tegas.instant_messenger_mobile.R
 import com.tegas.instant_messenger_mobile.data.Result
 import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.databinding.ActivityMainSecondBinding
@@ -31,6 +39,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        @StringRes
+        private val TAB_TITLES = intArrayOf(
+            R.string.tab_text_1,
+            R.string.tab_text_2,
+            R.string.tab_text_3
+        )
+    }
+
     //    private val nim = "21106050048"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +62,8 @@ class MainActivity : AppCompatActivity() {
         fetchData()
 
         setLogout()
+
+        setViewPager()
     }
 
     private fun getSession() {
@@ -93,5 +112,39 @@ class MainActivity : AppCompatActivity() {
         binding.tvLogout.setOnClickListener {
             viewModel.logout()
         }
+    }
+
+    private fun setViewPager() {
+        val sectionsPagerAdapter = SectionsPagerAdapter(this)
+        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.text = resources.getString(TAB_TITLES[position])
+        }.attach()
+
+        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.view?.background?.setColorFilter(
+                    ContextCompat.getColor(this@MainActivity, R.color.blue),
+                    PorterDuff.Mode.SRC_IN
+                )
+
+                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)?.setTextColor(
+                    ContextCompat.getColor(this@MainActivity, android.R.color.white)
+                )
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Reset background color when tab is unselected
+                tab?.view?.background?.clearColorFilter()
+                // Reset text color when tab is unselected
+                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)?.setTextColor(
+                    ContextCompat.getColor(this@MainActivity, R.color.black)
+                )
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
 }
