@@ -2,13 +2,17 @@ package com.tegas.instant_messenger_mobile.ui.detail
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
@@ -62,6 +66,21 @@ class DetailActivity : AppCompatActivity() {
 //            intent = Intent(this, MainActivity::class.java)
 //            startActivity(intent)
             onBackPressed()
+        }
+        binding.ivPhone.setOnClickListener {
+            viewModel.saveChat(item)
+        }
+
+        viewModel.resultFav.observe(this) {
+            binding.ivPhone.changeIconColor(R.color.darker_grey)
+        }
+
+        viewModel.resultDelFav.observe(this) {
+            binding.ivPhone.changeIconColor(R.color.blue)
+        }
+
+        viewModel.findFavorite(item?.chatId ?: "") {
+            binding.ivImage.changeIconColor(R.color.darker_grey)
         }
     }
 
@@ -174,4 +193,8 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
+}
+
+fun ImageView.changeIconColor(@ColorRes color: Int) {
+    imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this.context, color))
 }

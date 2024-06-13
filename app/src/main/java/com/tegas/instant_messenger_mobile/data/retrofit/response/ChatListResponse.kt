@@ -16,7 +16,7 @@ data class ChatListResponse(
 )
 
 @Parcelize
-@Entity
+@Entity(tableName = "chats")
 data class ChatsItem(
 
 	@PrimaryKey

@@ -65,6 +65,7 @@
                 android:layout_height="35dp"
                 android:layout_margin="8dp"
                 android:src="@drawable/phone"
+                android:id="@+id/iv_phone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

@@ -20,6 +20,7 @@ import com.tegas.instant_messenger_mobile.data.retrofit.response.ChatsItem
 import com.tegas.instant_messenger_mobile.databinding.ActivityMainSecondBinding
 import com.tegas.instant_messenger_mobile.ui.ViewModelFactory
 import com.tegas.instant_messenger_mobile.ui.detail.DetailActivity
+import com.tegas.instant_messenger_mobile.ui.favorite.FavoriteActivity
 import com.tegas.instant_messenger_mobile.ui.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
@@ -64,6 +65,11 @@ class MainActivity : AppCompatActivity() {
         setLogout()
 
         setViewPager()
+
+        binding.ivLines.setOnClickListener {
+            val intent = Intent(this, FavoriteActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun getSession() {
@@ -123,25 +129,27 @@ class MainActivity : AppCompatActivity() {
             tab.text = resources.getString(TAB_TITLES[position])
         }.attach()
 
-        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+        tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.view?.background?.setColorFilter(
                     ContextCompat.getColor(this@MainActivity, R.color.blue),
                     PorterDuff.Mode.SRC_IN
                 )
 
-                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)?.setTextColor(
-                    ContextCompat.getColor(this@MainActivity, android.R.color.white)
-                )
+                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)
+                    ?.setTextColor(
+                        ContextCompat.getColor(this@MainActivity, android.R.color.white)
+                    )
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 // Reset background color when tab is unselected
                 tab?.view?.background?.clearColorFilter()
                 // Reset text color when tab is unselected
-                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)?.setTextColor(
-                    ContextCompat.getColor(this@MainActivity, R.color.black)
-                )
+                tab?.view?.findViewById<TextView>(com.google.android.material.R.id.title)
+                    ?.setTextColor(
+                        ContextCompat.getColor(this@MainActivity, R.color.black)
+                    )
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
